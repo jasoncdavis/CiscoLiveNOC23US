@@ -86,7 +86,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `jasoncdavis`, `CiscoLiveNOC23US`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+This project is a collection of Python script, database DDL files, Grafana dashboard templates, etc. that are used in the CiscoLive Network Operations Center (NOC). These programs are inventory and metrics collectors and dashboard creators. The technologies span wireless (Catalyst and Meraki), WAN (ASR1009-X), LAN (Cat3560-CG, 7K, 9K and Nexus 9K), and basic availability monitoring.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -94,15 +94,18 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 
 ### Built With
 
-* [![Python][JQuery.com]][JQuery-url]
-* [![HTML][JQuery.com]][JQuery-url]
-* [![MySQL][JQuery.com]][JQuery-url]
-* [![Influx][JQuery.com]][JQuery-url]
-* [![Grafana][JQuery.com]][JQuery-url]
+* [![Python][python-shield]][python-url]
+* [![HTML][html-shield]][html-url]
+* [![CSS][css-shield]][css-url]
+* [![MySQL][mysql-shield]][mysql-url]
+* [![Influx][influxdb-shield]][influxdb-url]
+* [![Grafana][grafana-shield]][grafana-url]
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+This project is being released in phases, so check back often to see what additional components have been released.  Most recently the separate 'SSH2Influx' project was released on [Cisco DevNet Code Exchange](https://developer.cisco.com/codeexchange/github/repo/jasoncdavis/SSH2Influx/) and [Github](https://github.com/jasoncdavis/SSH2Influx).
+Additionally the [Devnet Dashboards - Converged Availability Monitor](https://github.com/jasoncdavis/devnetdashboards-convergedavailabilitymonitor) was updated and released end of June 2023.
 
 
 <!-- GETTING STARTED -->
@@ -185,7 +188,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the Cisco Sample Code License. See [LICENSE.md](./LICENSE.md) for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -194,7 +197,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Your Name - [@SNMPguy](https://twitter.com/SNMPguy) - jadavis@cisco.com
 
 Project Link: [https://github.com/jasoncdavis/CiscoLiveNOC23US](https://github.com/jasoncdavis/CiscoLiveNOC23US)
 
@@ -224,9 +227,20 @@ Project Link: [https://github.com/jasoncdavis/CiscoLiveNOC23US](https://github.c
 [issues-shield]: https://img.shields.io/github/issues/jasoncdavis/CiscoLiveNOC23US.svg?style=for-the-badge
 [issues-url]: https://github.com/jasoncdavis/CiscoLiveNOC23US/issues
 [license-shield]: https://img.shields.io/github/license/jasoncdavis/CiscoLiveNOC23US.svg?style=for-the-badge
-[license-url]: https://github.com/jasoncdavis/CiscoLiveNOC23US/blob/master/LICENSE.txt
+[license-url]: https://developer.cisco.com/site/license/cisco-sample-code-license
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[linkedin-url]: https://linkedin.com/in/jasoncdavis
+[product-screenshot]: images/screenshot.jpg
+
+[python-shield]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
+[python-url]: https://python.org/
+[html-shield]: https://img.shields.io/badge/HTML-239120?style=for-the-badge&logo=html5&logoColor=white
+[html-url]: https://html.spec.whatwg.org/
+[css-shield]: https://img.shields.io/badge/CSS-239120?&style=for-the-badge&logo=css3&logoColor=white
+[css-url]: https://www.w3.org/TR/CSS/#css
+[mysql-shield]: https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white
+[mysql-url]: https://www.mysql.com/products/enterprise/database/
+[influxdb-shield]: https://img.shields.io/badge/InfluxDB-22ADF6?style=for-the-badge&logo=InfluxDB&logoColor=white
+[influxdb-url]: https://www.influxdata.com/products/influxdb-overview/
+[grafana-shield]: https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white
+[grafana-url]: https://grafana.com/oss/grafana/
