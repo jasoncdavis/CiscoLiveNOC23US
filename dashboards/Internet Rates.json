@@ -1,0 +1,327 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 27,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<center><h1>Internet WAN Rate - IN</h1></center>",
+        "mode": "html"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 10,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<center><h1>Internet WAN Rate - OUT</h1></center>",
+        "mode": "html"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 320000000000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 100000000000
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 250000000000
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 11,
+        "x": 0,
+        "y": 3
+      },
+      "id": 6,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: 2m, fn: mean)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 320000000000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 100000000000
+              },
+              {
+                "color": "dark-orange",
+                "value": 250000000000
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 11,
+        "x": 13,
+        "y": 3
+      },
+      "id": 7,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: 2m, fn: mean)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "B"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 6,
+        "y": 19
+      },
+      "id": 12,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<p>\n<p>\n<h1><center>Total 320 Gbps capacity<br><br>\n3 x 100 Gbps Links and<br>\n2 x 10 Gbps Links<br>\nwith Lumen to Internet</center></h1>",
+        "mode": "html"
+      },
+      "pluginVersion": "9.4.7",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "description": "Zero point for starting internet data values - Eg. to reset from 812G prep, set the value to 812000000000.0",
+        "hide": 2,
+        "label": "",
+        "name": "ZeroPoint",
+        "query": "0.0",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "description": "Zero point for starting internet data values - Eg. to reset from 812G prep, set the value to 812000000000.0",
+        "hide": 2,
+        "label": "",
+        "name": "IPv4ZeroPoint",
+        "query": "0.0",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "description": "Zero point for starting internet data values - Eg. to reset from 812G prep, set the value to 812000000000.0",
+        "hide": 2,
+        "label": "",
+        "name": "IPv6ZeroPoint",
+        "query": "0.0",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Internet Rates",
+  "uid": "W4FcefWVk",
+  "version": 17,
+  "weekStart": ""
+}

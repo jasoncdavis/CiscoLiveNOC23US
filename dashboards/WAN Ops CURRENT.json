@@ -1,0 +1,3535 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "CLUS23 and IMPACT24",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 35,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 66,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<center><h1>CiscoLive Internet / WAN Stats</h1></center>",
+        "mode": "html"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 64,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Traffic Stats",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 3
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Total$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Down",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 3
+      },
+      "id": 20,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Total$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Up",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "right",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv4-out-octets"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv6-out-octets"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 11,
+        "x": 6,
+        "y": 3
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false,
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\"  or r[\"interface\"] == \"HundredGigE2/1/0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: 2m, fn: mean)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "B"
+        }
+      ],
+      "title": "Internet  Upload",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu2/1/0",
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Te1/1/8",
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Te1/1/8",
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv4-in-octets"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 7,
+        "x": 17,
+        "y": 3
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false,
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv4-out-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: 2m, fn: mean)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "IPv4 Traffic",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu2/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Te1/1/8",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Te1/1/8",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 6
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Total$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "IPv4 Down",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 6
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Total$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "IPv4 Up",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv4-in-octets"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv6-in-octets"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 11,
+        "x": 6,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false,
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: 2m, fn: mean)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Internet Download",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu2/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Te1/1/8",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Te1/1/8",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv6-in-octets"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 7,
+        "x": 17,
+        "y": 8
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false,
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-in-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: 2m, fn: mean)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "IPv6 Traffic",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu2/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-1 Te1/1/8",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Hu0/1/0",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CLNOC-ASR1009-2 Te1/1/8",
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 9
+      },
+      "id": 36,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Total$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "IPv6 Down",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 9
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Total$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "IPv6 Up",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+                "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 60,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "ASR1K-1 Vitals",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "free_memory"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Free Memory"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_memory"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total Memory"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "used_memory"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Used Memory"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "id": 28,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "WAN_Router",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-memory-oper:memory-statistics/memory-statistic\")\n  |> filter(fn: (r) => r[\"_field\"] == \"free_memory\" or r[\"_field\"] == \"used_memory\" or r[\"_field\"] == \"total_memory\")\n  |> filter(fn: (r) => r[\"name\"] == \"Processor\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-memory-oper:memory-statistics/memory-statistic\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-1\")\n  |> filter(fn: (r) => r[\"subscription\"] == \"102\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 8,
+        "y": 14
+      },
+      "id": 24,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "repeat": "WAN_Router",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"_field\"] == \"one_minute\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-1\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU 1 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 10,
+        "y": 14
+      },
+      "id": 26,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "repeat": "WAN_Router",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"_field\"] == \"five_minutes\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-1\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU 5 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 14
+      },
+      "id": 68,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"wan-stats\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"OneMin\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "QFP Utilization - 1 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 18,
+        "y": 14
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE2/1/0\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE2/1/0\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-1 Hu2/1/0 In",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 21,
+        "y": 14
+      },
+      "id": 14,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE2/1/0\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE2/1/0\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE2/1/0\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-1 Hu2/1/0 Out",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE2/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 18,
+        "y": 16
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-1 Hu0/1/0 In",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 21,
+        "y": 16
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-1 Hu0/1/0 Out",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 17
+      },
+      "id": 69,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"wan-stats\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"FiveMin\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "QFP Utilization - 5 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 8,
+        "y": 18
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "repeat": "WAN_Router",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"_field\"] == \"five_seconds\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-1\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU 5 Sec",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 18,
+        "y": 18
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-1 Te1/1/8 In",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 21,
+        "y": 18
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-1 Te1/1/8 Out",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-1\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 58,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "ASR1K-2 Vitals",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "free_memory"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Free Memory"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_memory"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total Memory"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "used_memory"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Used Memory"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 21
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-memory-oper:memory-statistics/memory-statistic\")\n  |> filter(fn: (r) => r[\"_field\"] == \"free_memory\" or r[\"_field\"] == \"used_memory\" or r[\"_field\"] == \"total_memory\")\n  |> filter(fn: (r) => r[\"name\"] == \"Processor\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-memory-oper:memory-statistics/memory-statistic\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"subscription\"] == \"102\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 8,
+        "y": 21
+      },
+      "id": 30,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"_field\"] == \"one_minute\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-2\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU 1 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 10,
+        "y": 21
+      },
+      "id": 31,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"_field\"] == \"five_minutes\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-2\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU 5 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 21
+      },
+      "id": 70,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+          "titleSize": 1
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"wan-stats\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"OneMin\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "QFP Utilization - 1 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 18,
+        "y": 21
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-2 Hu0/1/0 In",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 21,
+        "y": 21
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"HundredGigE0/1/0\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-2 Hu0/1/0 Out",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"HundredGigE0/1/0\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 18,
+        "y": 23
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-in\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv6-in-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-2 Te1/1/8 In",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-in-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 21,
+        "y": 23
+      },
+      "id": 18,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^ipv4\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\} \\+ ipv6\\-out\\-octets \\{device=\"CLNOC\\-ASR1009\\-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface\\-ipv4v6\"\\}$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: -2h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> filter(fn: (r) => r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\r\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-2 Te1/1/8 out",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "ipv4-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "ipv6-out-octets {device=\"CLNOC-ASR1009-2\", interface=\"TenGigabitEthernet1/1/8\", name=\"interface-ipv4v6\"}"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 24
+      },
+      "id": 71,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"wan-stats\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"FiveMin\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-2\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "QFP Utilization - 1 Min",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 8,
+        "y": 25
+      },
+      "id": 29,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"_field\"] == \"five_seconds\")\n  |> filter(fn: (r) => r[\"path\"] == \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\")\n  |> filter(fn: (r) => r[\"source\"] == \"CLNOC-ASR1009-2\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU 5 Sec",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 56,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Misc",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 0,
+        "y": 28
+      },
+      "id": 39,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"bgp-stats\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"neighbor-id\"] == \"63.231.216.9\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"current-prefixes\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-2 v4",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 5,
+            "axisSoftMin": -5,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "dBm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 15,
+        "x": 9,
+        "y": 28
+      },
+      "id": 73,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"opticalpower\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"instance\"] != \"TenGigabitEthernet1/1/9\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Optical Power over Time",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 0,
+        "y": 30
+      },
+      "id": 44,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"bgp-stats\")\r\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\")\r\n  |> filter(fn: (r) => r[\"neighbor-id\"] == \"2001:428:CE01:1111:63:231:216:9\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"current-prefixes\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "ASR-2 v6",
+      "type": "stat"
+    }
+  ],
+  "refresh": "10s",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "WAN Ops CURRENT",
+  "uid": "Fb273QQ4z",
+  "version": 7,
+  "weekStart": ""
+}

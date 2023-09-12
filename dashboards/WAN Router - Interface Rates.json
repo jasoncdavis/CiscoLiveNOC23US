@@ -1,0 +1,423 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 13,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "pps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv4-in-pkts"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv4-in"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv4-out-pkts"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv4-out"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv6-in-pkts"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv6-in"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv6-out-pkts"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv6-out"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 0,
+        "y": 0
+      },
+      "id": 17,
+      "interval": "5s",
+      "options": {
+        "displayMode": "lcd",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.4.7",
+      "repeat": "Router_Interface",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-pkts\")\n  |> derivative(unit: 5s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-pkts\")\n  |> derivative(unit: 5s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-in-pkts\")\n  |> derivative(unit: 5s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-out-pkts\")\n  |> derivative(unit: 5s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "D"
+        }
+      ],
+      "title": "PPS $Router_Interface",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv4-in-octets"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv4-in"
+              },
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv4-out-octets"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv4-out"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv6-in-octets"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv6-in"
+              },
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ipv6-out-octets"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ipv6-out"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 14,
+        "x": 10,
+        "y": 0
+      },
+      "id": 18,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "repeat": "Router_Interface",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-out-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-in-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"device\"] == \"${WAN_Router}\")\n  |> filter(fn: (r) => r[\"interface\"] == \"${Router_Interface}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-out-octets\")\n  |> map(fn: (r) => ({r with _value: int(v: r._value) * 8}))\n  |> derivative(unit: 1s, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "refId": "D"
+        }
+      ],
+      "title": "Interface Rate of Change $Router_Interface",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "CLNOC-ASR1009-2",
+          "value": "CLNOC-ASR1009-2"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "V6CpTVwnk"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.measurementTagValues(\n    bucket: \"telegraf\",\n    measurement: \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\",\n    tag: \"source\",\n)\n",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "WAN_Router",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.measurementTagValues(\n    bucket: \"telegraf\",\n    measurement: \"Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization\",\n    tag: \"source\",\n)\n",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "HundredGigE2/0/0",
+            "TenGigabitEthernet1/1/9",
+            "Tunnel1"
+          ],
+          "value": [
+            "HundredGigE2/0/0",
+            "TenGigabitEthernet1/1/9",
+            "Tunnel1"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "V6CpTVwnk"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.measurementTagValues(bucket: \"CLNOC\", measurement: \"interface-ipv4v6\", tag: \"interface\")",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Router_Interface",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.measurementTagValues(bucket: \"CLNOC\", measurement: \"interface-ipv4v6\", tag: \"interface\")",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "WAN Router - Interface Rates",
+  "uid": "0ufLs3X7k",
+  "version": 7,
+  "weekStart": ""
+}

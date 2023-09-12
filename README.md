@@ -62,6 +62,12 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+      <ul>
+          <li><a href="#availability">Availability Monitoring</a></li>
+          <li><a href="#wan">WAN Monitoring</a></li>
+          <li><a href="#lan">LAN Monitoring</a></li>
+          <li><a href="#wireless">Wireless Monitoring</a></li>
+        </ul>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -137,6 +143,7 @@ Our installs were 4 vCPU with 16 GB vRAM and 100 GB vDisk.
    cp example-optionsconfig.yaml optionsconfig.yaml
    vi optionsconfig.yaml
    ```
+4. Create a Telegraf, InfluxDB and Grafana (TIG) server to receive streaming telemetry, injected metrics from the Python scripts of this project, and display the dashboards.  Ensure the TIG server specs (IP Address, hostname, API keys, etc) are properly defined in the optionsconfig.yaml file.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -145,7 +152,109 @@ Our installs were 4 vCPU with 16 GB vRAM and 100 GB vDisk.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-There are SEVERAL scripts that are necessary to run, depending on your needs.
+There are SEVERAL collectors and scripts that are necessary to run, depending on your needs.
+
+### Availability Monitoring
+
+The Availability Monitoring tasks are handled through the DevNet Dashboard - Converged Availability Monitoring ([DD-CAM](https://github.com/jasoncdavis/DD-CAM)) project.  This is under a separate repo.
+https://github.com/jasoncdavis/DD-CAM
+
+Follow the guidance in that repo to install and configure.
+
+### WAN Monitoring
+
+WAN Monitoring is a mix of streaming telemetry, polled NETCONF RPCs and CLI information gathering (with SSH2Influx).  The following configuration template is used for our IOS-XR based WAN edge routers (Cisco ASR1009-Xs).
+
+```
+telemetry ietf subscription 101
+ encoding encode-kvgpb
+ filter xpath /process-cpu-ios-xe-oper:cpu-usage/cpu-utilization
+ source-address CHANGEME_SOURCE_IP
+ stream yang-push
+ update-policy periodic 2000
+ receiver ip address CHANGEME_TELEGRAF_IP 57500 protocol grpc-tcp
+telemetry ietf subscription 102
+ encoding encode-kvgpb
+ filter xpath /memory-ios-xe-oper:memory-statistics/memory-statistic
+ source-address CHANGEME_SOURCE_IP
+ stream yang-push
+ update-policy periodic 2000
+ receiver ip address CHANGEME_TELEGRAF_IP 57500 protocol grpc-tcp
+telemetry ietf subscription 104
+ encoding encode-kvgpb
+ filter xpath /ospf-ios-xe-oper:ospf-oper-data/ospfv2-instance/ospfv2-area/ospfv2-interface/ospfv2-neighbor
+ source-address CHANGEME_SOURCE_IP
+ stream yang-push
+ update-policy periodic 60000
+ receiver ip address CHANGEME_TELEGRAF_IP 57500 protocol grpc-tcp
+telemetry ietf subscription 105
+ encoding encode-kvgpb
+ filter xpath /bgp-ios-xe-oper:bgp-state-data/address-families/address-family/bgp-neighbor-summaries/bgp-neighbor-summary
+ source-address CHANGEME_SOURCE_IP
+ stream yang-push
+ update-policy periodic 60000
+ receiver ip address CHANGEME_TELEGRAF_IP 57500 protocol grpc-tcp
+netconf-yang
+netconf-yang ssh ipv4 access-list name HTTP_FILTER
+netconf-yang ssh ipv6 access-list name IPV6_FILTER
+restconf
+restconf ipv4 access-list name HTTP_FILTER
+restconf ipv6 access-list name IPV6_FILTER
+```
+
+The Telegraf server needs the telegraf.conf file update to include:
+```
+[[inputs.cisco_telemetry_mdt]]
+ transport = "grpc"
+ service_address = ":57000"
+```
+
+and an output section:
+```
+[[outputs.influxdb]]
+  database = "telegraf"
+  urls = [ "http://127.0.0.1:8086" ]
+  username = "telegraf"
+  password = "CHANGEME"
+```
+
+The InfluxDB server (we put them together into a combined TIG server) must be configured to receive the Telegraf gRPC telemetry into a new database.  Access the 'influx' CLI utility and issue the commands:
+```
+create database telegraf
+create user telegraf with password 'CHANGEME'
+```
+
+There are various Grafana dashboard JSON definition files in the [dashboards](./dashboards) directory. Specifically for WAN, we'll want to import the following:
+* [Internet Volume](./dashboards/Internet%20Stats.json)
+* [Internet Rates](./dashboards/Internet%20Rates.json)
+* [Topo-CoreToWAN-PPS](./dashboards/Topo-CoreToWAN-PPS.json) - requires heavy modification
+* [Topo-CoreToWAN](./dashboards/Topo-CoreToWAN.json) - requires heavy modification
+* [WAN - IPv6 Stats](./dashboards/WAN%20-%20IPv6%20Stats.json)
+* [WAN Ops CURRENT](./dashboards/WAN%20Ops%20CURRENT.json)
+* [WAN Router - CPU & Mem](./dashboards/WAN%20Router%20-%20CPU%20&%20Mem.json)
+* [WAN Router - Interface Rates](./dashboards/WAN%20Router%20-%20Interface%20Rates.json)
+* [WAN Router - Optical Power](./dashboards/Optical%20Power.json)
+
+The following WAN scripts should be run:
+```sh
+cd CiscoLiveNOC23US
+source .venv/bin/activate
+tmux new -s WAN-interface
+python -m WAN.NETCONFrpc-getInterfaceData
+[CTRL-b + d]  # detaches from tmux
+tmux new -s WAN-transceiver
+python -m WAN.SSHget-transceiverpower.py
+[CTRL-b + d]  # detaches from tmux
+```
+
+### LAN Monitoring
+
+LAN Switching encompasses Core, Distribution, and Access with DC Nexus switching.
+
+
+### Wireless Monitoring
+
+
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 

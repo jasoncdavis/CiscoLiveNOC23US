@@ -1,0 +1,255 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 34,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "_a9banT4k"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<p style=\"font-size: 60px;\n  text-align: center;\n\">Ratio of IPv6 Traffic",
+        "mode": "html"
+      },
+      "pluginVersion": "9.4.7",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": false
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "totalip = from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-in-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> group(columns: [\"_time\"], mode:\"by\")\n  |> sum(column: \"_value\")\n  |> group()\n  |> last(column: \"_value\")\n  |> map(fn: (r) => ({r with _value: float(v: r._value) - ${ZeroPoint}}))\n\nipv6 = from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-in-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> group(columns: [\"_time\"], mode:\"by\")\n  |> sum(column: \"_value\")\n  |> group()\n  |> last(column: \"_value\")\n  |> map(fn: (r) => ({r with _value: float(v: r._value) - ${IPv6ZeroPoint}}))\n\njoin(tables: {ipv6: ipv6, totalip: totalip}, on: [\"_time\"])\n    |> map(fn: (r) => ({r with _value: r._value_ipv6 / r._value_totalip * 100.0}))\n    |> keep(columns: [\"_time\", \"_value\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Current",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "V6CpTVwnk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "mappings": [],
+          "max": 60,
+          "min": 10,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "V6CpTVwnk"
+          },
+          "hide": false,
+          "query": "totalip = from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv4-in-octets\" or r[\"_field\"] == \"ipv4-out-octets\" or r[\"_field\"] == \"ipv6-in-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> group(columns: [\"_time\"], mode:\"by\")\n  |> sum(column: \"_value\")\n  |> group()\n  |> map(fn: (r) => ({r with _value: float(v: r._value) - ${ZeroPoint}}))\n\nipv6 = from(bucket: \"CLNOC\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"interface-ipv4v6\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ipv6-in-octets\" or r[\"_field\"] == \"ipv6-out-octets\")\n  |> filter(fn: (r) => r[\"device\"] == \"CLNOC-ASR1009-1\" or r[\"device\"] == \"CLNOC-ASR1009-2\")\n  |> filter(fn: (r) => r[\"interface\"] == \"HundredGigE0/1/0\" or r[\"interface\"] == \"HundredGigE2/1/0\" or r[\"interface\"] == \"TenGigabitEthernet1/1/8\")\n  |> group(columns: [\"_time\"], mode:\"by\")\n  |> sum(column: \"_value\")\n  |> group()\n  |> map(fn: (r) => ({r with _value: float(v: r._value) - ${IPv6ZeroPoint}}))\n\njoin(tables: {ipv6: ipv6, totalip: totalip}, on: [\"_time\"])\n    |> map(fn: (r) => ({r with _value: r._value_ipv6 / r._value_totalip * 100.0}))\n    |> keep(columns: [\"_time\", \"_value\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "IPv6 Traffic Ratio over Time",
+      "transparent": true,
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "hide": 2,
+        "name": "IPv6ZeroPoint",
+        "query": "0.0",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "hide": 2,
+        "name": "ZeroPoint",
+        "query": "0.0",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now/d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "WAN - IPv6 Stats",
+  "uid": "651QlD0Vz",
+  "version": 19,
+  "weekStart": ""
+}
