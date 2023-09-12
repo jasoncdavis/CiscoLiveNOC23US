@@ -1,0 +1,69 @@
+---
+# SSH2Influx work definition file based on YAML 1.1 spec
+# https://yaml.org/spec/1.1/
+# Define the hosts to be polled under an [inventory][hosts] branch.
+# Hosts can have specific commands with a subordinate commands list;
+# [inventory][vars][globalcommands] will be used for all entries
+
+
+# Example of inventory with a host-specific set of commands and
+# one host that only has globalcommands
+# [note: both get global commands]
+#
+# inventory:
+#  hosts:
+#    - host: device-1
+#      commands:
+#        - cmd: show ver
+#          parsespec: 1001
+#        - cmd: show clock
+#          parsespec: 1002
+#    - host: device-2
+
+inventory:
+  credential_set: DefaultCredentials
+  hosts:
+    - host: access-sw-1
+    - host: access-sw-2
+    - host: access-sw-3
+    - host: access-sw-4
+    - host: access-sw-5
+    #- host: MB-3-HALLWAY-5   # Comment entries like this
+  groupcommands:
+    - cmd: show proc cpu | incl ^Load
+      parsespec: 101
+    - cmd: show int summary | count ^\*
+      parsespec: 111
+
+parsespecs:
+  - parsespec: 101
+    measurement: LAN-stats
+    statictags:
+      - tagname: stat
+        tagvalue: cpu
+    matchtype: single
+    regex: >-
+      secs: (\d+)\%\/(\d+)\%; one minute: (\d+)\%; five minutes: (\d+)
+    match1: cpu5sec
+    match1keytype: field
+    match1valuetype: integer
+    match2: cpu5secint
+    match2keytype: field
+    match2valuetype: integer
+    match3: cpu1min
+    match3keytype: field
+    match3valuetype: integer
+    match4: cpu5min
+    match4keytype: field
+    match4valuetype: integer
+  - parsespec: 111
+    measurement: LAN-stats
+    statictags:
+      - tagname: stat
+        tagvalue: port-count
+    matchtype: single
+    regex: >-
+      regexp = (\d+)
+    match1: port-count
+    match1keytype: field
+    match1valuetype: integer

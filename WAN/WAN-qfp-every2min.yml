@@ -1,0 +1,63 @@
+---
+# WAN-qfp-every2min.yml
+
+# SSH2Influx work definition file based on YAML 1.1 spec
+# https://yaml.org/spec/1.1/
+# Define the hosts to be polled under an [inventory][hosts] branch.
+# Hosts can have specific commands with a subordinate commands list;
+# [inventory][vars][globalcommands] will be used for all entries
+
+
+# Example of inventory with a host-specific set of commands and
+# one host that only has globalcommands
+# [note: both get global commands]
+#
+# inventory:
+#  hosts:
+#    - host: device-1
+#      commands:
+#        - cmd: show ver
+#          parsespec: 1001
+#        - cmd: show clock
+#          parsespec: 1002
+#    - host: device-2
+
+inventory:
+  credential_set: DefaultCredentials
+  hosts:
+    - host: wan-edge-1
+    - host: wan-edge-2
+  groupcommands:
+    - cmd: show platform hardware qfp active datapath utilization
+      parsespec: 101
+
+parsespecs:
+  - parsespec: 101
+    measurement: wan-stats
+    matchtype: iterative
+    statictags:
+      - tagname: metric
+        tagvalue: qfputil
+    regex: >-
+      (CPP 0: (Subdev \d).*?Process.*?)\n
+    regexmatches:
+      - regex: >-
+          Processing.*?pct\)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)
+        groupname: rp-status
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          RMI Status : (.+?)\n
+        groupname: rmi-status
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Current Chassis State : (.+?)\n
+        groupname: current-chassis-state
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Peer Chassis State\s+:\s(.+?)$
+        groupname: peer-chassis-state
+        groupkeytype: field
+        groupvaluetype: string

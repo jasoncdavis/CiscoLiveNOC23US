@@ -1,0 +1,159 @@
+#optionsconfig.yaml
+#Configuration options for DevNet Dashboards project - contains target endpoint names/IPs, credentials, etc.
+
+# Threshold for ping latency warnings, in milliseconds
+LatencyThreshold: 15
+
+# Timezone for datetime to be shown on dashboard
+Timezone: US/Pacific
+
+# Dashboard file to publish: Apache on Linux - /var/www/html/DevNetDashboards/DDCAM/availability.html
+#   Apache in containerized version - /web-data/DevNetDashboards/DDCAM/availability.html
+DashboardFile: /var/local/DDCAM/index.html
+WirelessDashboardDirectory: /var/local/nfsshare-wireless
+
+# MySQL database for storing device and status information
+MySQL:
+  host: CHANGEME
+  CheckSSLCert: False  # Or False, if you are not security conscious and using self-signed certs internally
+  username: CHANGEME
+  password: CHANGEME
+  database: devnet_dashboards
+
+# InfluxDB database for storing timeseries data
+InfluxDB:
+  host: CHANGEME
+  alias: CHANGEME
+  protocol: http
+  port: 8086
+  token: 'CHANGEME=='
+  bucket: CHANGEME
+  bucketname: CHANGEME
+  org: CHANGEME
+  orgname: CHANGEME
+  SSHusername: CHANGEME
+  SSHpassword: CHANGEME
+
+
+# DNA Center Server environment info - at least one, possibly more hosts
+DNACenter:
+  - host: sandboxdnac.cisco.com
+    CheckSSLCert: True  # Or False, if you are not security conscious and using self-signed certs internally
+    username: devnetuser
+    password: Cisco123!
+  - host: sandboxdnac2.cisco.com
+    CheckSSLCert: True  # Or False, if you are not security conscious and using self-signed certs internally
+    username: devnetuser
+    password: Cisco123!
+
+
+WLC:
+  - host: CHANGEME
+    alias: wlc-1
+    description: Whole Event
+    CheckSSLCert: False  # Or False, if you are not security conscious and using self-signed certs internally
+    username: CHANGEME
+    password: CHANGEME
+  - host: CHANGEME
+    alias: wlc-site2-1
+    description: KeyNote WLC
+    CheckSSLCert: False  # Or False, if you are not security conscious and using self-signed certs internally
+    username: CHANGEME
+    password: CHANGEME
+    notes: XYZ Event Center
+
+
+InterfaceDevices:
+  - host: CHANGEME
+    alias: wan-edge-1
+    username: CHANGEME
+    password: CHANGEME
+  - host: CHANGEME
+    alias: wan-edge-2
+    username: CHANGEME
+    password: CHANGEME
+
+# git repo info
+git:
+  host: localhost
+  directory: /opt/repo/configs
+  committer_name: "CLNOC Python Script NETCONFrpc-getConfig.py"
+  committer_email: "none@example.com"
+  author_name: "CLNOC Network Device"
+  author_email: "none@example.com"
+  description: CLNOC Device config repo
+
+# Webex Room Ids
+wirelessalerts_webexroomid: CHANGEME
+switchalerts_webexroomid: CHANGEME
+alerts_webexroomid: CHANGEME
+
+
+# AAA Cred default for automation usage
+AAA-default:
+  username: CHANGEME
+  password: CHANGEME
+
+
+# Meraki credentials
+Meraki:
+  baseURL: https://api.meraki.com/api/v1
+  APIkey: CHANGEME
+  org: CHANGEME
+  timespan: 300
+  resolution: 300
+  networkId: CHANGEME
+  networkList:
+    - CHANGEME
+
+# Authentication Groups
+DefaultCredentials:
+  username: CHANGEME
+  password: CHANGEME
+
+WANCredentials:
+  username: CHANGEME
+  password: CHANGEME
+
+
+WirelessXRef:
+  - alias: wlc-1
+    description: Whole Event
+    friendlyname: main-wlc
+
+
+# Cisco Prime Network Registrar
+CPNR:
+  APItoken: CHANGEME==
+  cdns_servers:
+    - name: cdns-a
+      ipaddress: 10.1.2.10
+    - name: cdns-b
+      ipaddress: 10.1.2.11
+
+
+# Distribution Switches
+DIST:
+  - host: 10.1.2.20
+    alias: dist-1
+  - host: 10.1.2.21
+    alias: dist-2
+
+
+device_inventory:
+  - mgmt_hostnameip: 10.1.2.30
+    alias: switch-1
+  - mgmt_hostnameip: 10.1.2.31
+    alias: switch-2
+
+
+  # WLCs
+  - mgmt_hostnameip: 10.2.3.10
+    alias: wlc-1
+    description: Whole Event
+    CheckSSLCert: False  # Or False, if you are not security conscious and using self-signed certs internally
+  - mgmt_hostnameip: 10.2.3.11
+    alias: wlc-2
+    description: KeyNote WLC
+    CheckSSLCert: False  # Or False, if you are not security conscious and using self-signed certs internally
+    notes: notes here

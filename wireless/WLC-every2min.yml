@@ -1,0 +1,245 @@
+---
+# WLC-every2min.yml
+
+# SSH2Influx work definition file based on YAML 1.1 spec
+# https://yaml.org/spec/1.1/
+# Define the hosts to be polled under an [inventory][hosts] branch.
+# Hosts can have specific commands with a subordinate commands list;
+# [inventory][vars][globalcommands] will be used for all entries
+
+
+# Example of inventory with a host-specific set of commands and
+# one host that only has globalcommands
+# [note: both get global commands]
+#
+# inventory:
+#  hosts:
+#    - host: device-1
+#      commands:
+#        - cmd: show ver
+#          parsespec: 1001
+#        - cmd: show clock
+#          parsespec: 1002
+#    - host: device-2
+
+inventory:
+  credential_set: DefaultCredentials
+  hosts:
+    - host: wlc-1
+    - host: wlc-site2-1
+  groupcommands:
+    - cmd: show process cpu platform | incl Pid|wncd
+      parsespec: 101
+    - cmd: show wireless loadbalance tag affinity wncd 0
+      parsespec: 200
+    - cmd: show wireless loadbalance tag affinity wncd 1
+      parsespec: 201
+    - cmd: show wireless loadbalance tag affinity wncd 2
+      parsespec: 202
+    - cmd: show wireless loadbalance tag affinity wncd 3
+      parsespec: 203
+    - cmd: show wireless loadbalance tag affinity wncd 4
+      parsespec: 204
+    - cmd: show wireless loadbalance tag affinity wncd 5
+      parsespec: 205
+    - cmd: show wireless loadbalance tag affinity wncd 6
+      parsespec: 206
+    - cmd: show wireless loadbalance tag affinity wncd 7
+      parsespec: 207
+    - cmd: show redundancy
+      parsespec: 301
+
+parsespecs:
+  - parsespec: 101
+    measurement: wireless-wncd-proc
+    matchtype: multiple
+    regex: >-
+      \s\d+\s+\d+\s+(\d+)%\s+(\d+)%\s+(\d+)%\s+.\s+\d+\s+(\S+)
+    match1: fiveSecCPU
+    match1keytype: field
+    match1valuetype: integer
+    match2: oneMinCPU
+    match2keytype: field
+    match2valuetype: integer
+    match3: fiveMinCPU
+    match3keytype: field
+    match3valuetype: integer
+    match4: wncdInstance
+    match4keytype: tag
+    match4valuetype: string
+  - parsespec: 200
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_0
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 201
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_1
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 202
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_2
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 203
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_3
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 204
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_4
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 205
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_5
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 206
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_6
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 207
+    measurement: wireless-wncd-tagaffinity
+    matchtype: single
+    regex: >-
+      (^\w[\w\-\s]+?)\s{2,}SITE TAG\s+(\d+)
+    statictags:
+      - tagname: wncdInstance
+        tagvalue: wncd_7
+    match1: tagName
+    match1keytype: tag
+    match1valuetype: string
+    match2: APsJoined
+    match2keytype: field
+    match2valuetype: integer
+  - parsespec: 301
+    measurement: wireless-stats
+    matchtype: iterative
+    statictag1: metric
+    statictag1value: redundancy
+    regexmatches:
+      - regex: >-
+          Available system uptime = (.*?)\n
+        groupname: systemupdate
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Switchovers system experienced = (\d+)
+        groupname: switchovers
+        groupkeytype: field
+        groupvaluetype: integer
+      - regex: >-
+          Standby failures = (\d+)
+        groupname: standbyfailures
+        groupkeytype: field
+        groupvaluetype: integer
+      - regex: >-
+          Last switchover reason = (.*?)\n
+        groupname: lastswitchoverreason
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Hardware Mode = (.*?)\n
+        groupname: hardwaremode
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Configured Redundancy Mode = (.*?)\n
+        groupname: configuredredundancymode
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Operating Redundancy Mode = (.*?)\n
+        groupname: operatingredundancymode
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Communications = (.*?)\n
+        groupname: communications
+        groupkeytype: field
+        groupvaluetype: string
+      - regex: >-
+          Current Software state = (.*?)\n
+        groups:
+          - groupname: priswstate
+            groupkeytype: field
+            groupvaluetype: string
+          - groupname: secswstate
+            groupkeytype: field
+            groupvaluetype: string
+      - regex: >-
+            Uptime in current state = (.*?)\n
+        groups:
+          - groupname: priuptimeincurrentstate
+            groupkeytype: field
+            groupvaluetype: string
+          - groupname: secuptimeincurrentstate
+            groupkeytype: field
+            groupvaluetype: string

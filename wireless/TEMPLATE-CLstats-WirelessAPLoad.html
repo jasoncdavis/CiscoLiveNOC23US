@@ -1,0 +1,159 @@
+<html>
+<!-- Filename: CLstats-WirelessAPLoad.html -->
+<head>
+	<meta http-equiv="content-type" a="" content="text/html;
+charset=UTF-8">
+	<meta http-equiv="refresh" content="15">
+	<title>Cisco Live AP Client Load</title>
+	<style type="text/css">		
+		* {
+		    box-sizing: border-box;
+		}
+		
+		body {
+		    background-color: black;
+		    color: #ffffff;
+		    font-family: Helvetica, Arial, Sans-Serif;
+		    padding: 4% 2%;
+		    /*overflow-y: scroll;*/
+		}
+		
+		h1 {
+		    text-align: center;
+		    font-size: 70px;
+		    font-weight: normal;
+		    padding: 0;
+		    margin: 0 0 20px 0;
+		}
+		
+		h2 {
+			font-weight: normal;
+			text-align: center;
+			font-size: 24px;
+			line-height: 1.3em;
+		}
+		
+		ul#key {
+			list-style: none;
+			margin: 0 0 4px 0;
+			padding: 0;
+		}
+
+		ul#key li {
+			display: inline-block;
+			padding: 10px;
+			margin: 0;
+		}
+		.ap-stats {
+			background-color: #000000;
+		}
+
+		.ap-placeholder {
+			background-color: black;
+		}
+
+		.ap-down {
+			background-color: #F94207;
+			color: black;
+		}
+
+		.ap-low {
+			background-color: #6BFD5A;
+			color: black;
+		}
+
+		.ap-mid {
+			background-color: #D8FD5A;
+			color: black;
+		}
+
+		.ap-high {
+			background-color: orange;
+			color: black;
+		}
+		
+		.container_top {
+			/*height: 8%;
+			overflow-y: visible;*/
+		}
+
+		.container_maincontent {
+			height: 80%;
+			overflow-y: visible;
+		    width: 100%;
+		}
+		        
+		.container_footer {
+			height: 10%;
+			overflow-y: clip;
+		    width: 100%;
+		}
+		
+		table {
+			width: 95%;
+			table-layout: fixed;
+			border-collapse: collapse;
+		}
+
+		td {
+			width: 7%;
+			padding: 4px;
+		    font-size: 10px;
+			/* border: 1px solid #fefefe; */
+	        border-radius: 1rem;
+			text-overflow: ellipsis;
+		}
+		
+		#block_container > div {
+		    display: inline-block;
+			height: 6%;
+		}
+		    
+		#bloc1 {
+		    	display:inline;
+		    	float:left;
+		}
+		
+		#bloc2 {
+		    	display:inline;
+		    	float:right;
+		}
+
+	</style>
+</head>
+<body>
+<div class="container_top">
+	<h1>
+		AP Client Load
+	</h1>
+	<div id="block_container">
+		<div id="bloc1">
+			<ul id="key">
+				<li class="ap-stats"> Total Clients: <strong>###TOTALCLIENTCOUNT###</strong> </li>
+			</ul>
+		</div>
+		<div id="bloc2">
+			<ul id="key">
+				<li class="ap-stats"> Total APs (Online / Configured / Down): <strong>###APSUPCOUNT### / ###APSCONFIGURED### / <font class="ap-down">###APSDOWNCOUNT###</font></strong> </li>
+				<li class="ap-low"> APs &lt; 60 clients: <strong>###GREEN###</strong> </li>
+				<li class="ap-mid"> APs &lt; 75 &amp;&nbsp; &gt;= 60 clients: <strong>###YELLOW###</strong> </li>
+				<li class="ap-high"> APs &gt;= 75 clients: <strong>###ORANGE###</strong> </li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div class="container_maincontent">
+	<table class="CLTable" border="1">
+		###TABLEROWS### 
+	</table>
+	<p>
+</div>
+<div class="container_footer">
+	Unassociated APs 
+	###TABLEUNASSOCIATED### 
+	<h2>
+		Last run: ###RUNDATETIME### / Updated Every 2 Minutes 
+	</h2>
+</div>
+</body>
+</html>

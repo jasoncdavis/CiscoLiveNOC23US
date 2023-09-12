@@ -26,19 +26,10 @@
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 
-
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/jasoncdavis/CiscoLiveNOC23US">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
-
 <h3 align="center">CiscoLive NOC 2023</h3>
 
   <p align="center">
     This repo contains Python scripts, HTML/Grafana templates and SQL DDL for CiscoLive NOC collectors and dashboards.
-    COMING SOON!  To be populated AFTER CiscoLive event!
     <br />
     <a href="https://github.com/jasoncdavis/CiscoLiveNOC23US"><strong>Explore the docs »</strong></a>
     <br />
@@ -88,6 +79,10 @@
 
 This project is a collection of Python script, database DDL files, Grafana dashboard templates, etc. that are used in the CiscoLive Network Operations Center (NOC). These programs are inventory and metrics collectors and dashboard creators. The technologies span wireless (Catalyst and Meraki), WAN (ASR1009-X), LAN (Cat3560-CG, 7K, 9K and Nexus 9K), and basic availability monitoring.
 
+The following dashboards are part of this project:
+
+[carousel?]
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -111,31 +106,36 @@ Additionally the [Devnet Dashboards - Converged Availability Monitor](https://gi
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+Generally a Python 3.10 environment is needed.  It is helpful to use a virtual environment (venv) for separation from your main environment.  Ubuntu 22.04 LTS (Jammy Jellyfish) has been used for a few major events and is Long-Term Support.
+
+Installing Python 3.10 is outside the scope of this repo, but this is a good reference:
+
+[Ubuntu 22.04 LTS Install from Ubuntu.com](https://ubuntu.com/server/docs/installation)
+
+Our installs were 4 vCPU with 16 GB vRAM and 100 GB vDisk.
+
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
    git clone https://github.com/jasoncdavis/CiscoLiveNOC23US.git
    ```
-3. Install NPM packages
+2. Install project dependencies from the Python Package Index (PyPi) repo
    ```sh
-   npm install
+   cd CiscoLiveNOC23US
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+3. Create an environment-specific optionalconfig.yaml file and replace the CHANGEME parameters with your IP addresses, hostnames, usernames, passwords, etc.
+   ```sh
+   cp example-optionsconfig.yaml optionsconfig.yaml
+   vi optionsconfig.yaml
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -145,7 +145,7 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+There are SEVERAL scripts that are necessary to run, depending on your needs.
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
@@ -156,7 +156,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
+- [ ] Provide Docker container option
 - [ ] Feature 2
 - [ ] Feature 3
     - [ ] Nested Feature
@@ -197,7 +197,7 @@ Distributed under the Cisco Sample Code License. See [LICENSE.md](./LICENSE.md) 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@SNMPguy](https://twitter.com/SNMPguy) - jadavis@cisco.com
+Jason Davis - [@SNMPguy](https://twitter.com/SNMPguy) - jadavis@cisco.com
 
 Project Link: [https://github.com/jasoncdavis/CiscoLiveNOC23US](https://github.com/jasoncdavis/CiscoLiveNOC23US)
 
@@ -208,9 +208,9 @@ Project Link: [https://github.com/jasoncdavis/CiscoLiveNOC23US](https://github.c
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* [Andy Phillips]()
+* [Erwin Dominguez]()
+* [Dave Benham]()
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

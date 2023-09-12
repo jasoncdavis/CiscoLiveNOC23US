@@ -1,0 +1,60 @@
+---
+# SSH2Influx work definition file based on YAML 1.1 spec
+# https://yaml.org/spec/1.1/
+# Define the hosts to be polled under an [inventory][hosts] branch.
+# Hosts can have specific commands with a subordinate commands list;
+# [inventory][vars][globalcommands] will be used for all entries
+
+
+# Example of inventory with a host-specific set of commands and
+# one host that only has globalcommands
+# [note: both get global commands]
+#
+# inventory:
+#  hosts:
+#    - host: device-1
+#      commands:
+#        - cmd: show ver
+#          parsespec: 1001
+#        - cmd: show clock
+#          parsespec: 1002
+#    - host: device-2
+
+Threads: 1
+
+# WIFI-DIST collectors
+inventory:
+  credential_set: DefaultCredentials
+  hosts:
+    - host: WIFI-DIST-1
+    - host: WIFI-DIST-2
+  groupcommands:
+    - cmd: show system internal adjmgr internal info | i "Current v[46] entries"
+      parsespec: 10
+    #- cmd: show ipv6 neighbor summ | inc Total
+    #  parsespec: 20
+    #- cmd: show ip arp summ | inc Total
+    #  parsespec: 30
+    #- cmd: show hardware capacity forwarding | i "1[ ]+[01][ ]+[0-9]+[ ]+[0-9]+[ ]+[0-9]+[ ]+[0-9]+[ ]+[0-9]+[ ]+[0-9]+"
+    #  parsespec: 40
+    #- cmd: show hardware capacity forwarding
+    #  parsespec: 50
+
+parsespecs:
+  - parsespec: 10
+    matchtype: iterative
+    measurement: DIST-stats
+    statictags:
+      - tagname: stat
+        tagvalue: adjmgr
+    regexmatches:
+      - regex: >-
+          Current v4 entries in AM : (\d+)
+        groupname: ipv4entries
+        groupkeytype: field
+        groupvaluetype: integer
+      - regex: >-
+          Current v6 entries in AM : (\d+)
+        groupname: ipv6entries
+        groupkeytype: field
+        groupvaluetype: integer

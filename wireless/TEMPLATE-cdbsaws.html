@@ -1,0 +1,266 @@
+<html>
+<!-- 
+    Client Distribution by Wireless Standard and SSID dashboard
+    Version 1 - jadavis - 2023-0505 forked from new TEMPLATE-dbws.html
+    
+    File renders to Apache webserver as: ClientsbySSIDandRadioStandard.html
+    derived from: TEMPLATE-cdbsaws.html
+-->
+<head>
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+<!-- Always force latest IE rendering engine or request Chrome Frame 
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"> 
+    <meta http-equiv="refresh" content="30"> -->
+    <title>Client Distribution by SSID and Wireless Standard</title>
+    <style type="text/css">
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 70px;
+            font-weight: normal;
+            padding: 0;
+            margin: 20 0 0 0; }
+
+        h2 {
+            font-weight: normal;
+            text-align: center;
+            font-size: 50px;
+            line-height: 1.3em; }
+
+        h3 {
+            font-weight: normal;
+            text-align: center;
+            font-size: 20px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse; }
+
+        th {
+            font-size: 20px !important;
+            padding-bottom: 30px !important; }
+            
+        td { padding: 0 0 20px 0; }
+
+        td.label {
+            width: 12%;
+            font-size: 25px; 
+            padding-right: 20px; }
+
+        td.percent {
+            width: 5%;
+            font-size: 30px;
+            text-align: right; }
+            
+        [class$="80211"] {
+        	text-align: center; 
+            font-size: 30px; }
+
+        .bar {
+            width: 100%;
+            margin: 0;
+            padding: 15px 0px;
+            text-align: right;
+            font-size: 26px;
+            border-radius: 0px 15px 15px 0px; }
+
+        .total-clients {
+            font-size: 45px;
+            margin-bottom: 25px;
+            color: cyan; }
+
+        .header {
+            height: 18%; 
+            margin-bottom: 50px; }
+
+        .content {
+            height: 65%; }
+
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: rgb(13, 39, 77);
+            color: white;
+            text-align: center; }
+
+        /* Disable wireless standard displays on dashboard by adding
+           'display: none;' to CSS style within {}, eg.
+           .w80211* { display: none; }
+        */
+        .w80211ax6 { }
+        .w80211ax5 { }
+        .w80211ax24 { display: none; }
+        .w80211ac { }
+        .w80211n5 { }
+        .w80211n24 { display: none; }
+        .w80211g { display: none; }
+        .w80211a { display: none; }
+        .w80211b { display: none; }
+
+        .ax6-80211 { background-color: red; }
+        .ax5-80211 { background-color: red; }
+        .ax24-80211 { background-color: red; }
+        .ac-80211 { background-color: indianred; }
+        .n5-80211 { background-color: purple; }
+        .n24-80211 { background-color: sienna; }
+        .g-80211 { background-color: saddlebrown; }
+        .a-80211 { background-color: saddlebrown; }
+        .b-80211 { background-color: saddlebrown; }
+
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: rgb(13, 39, 77); }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: white; }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: rgb(0, 81, 175);
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: rgb(0, 188, 235);
+          color: black;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          /* border: 1px solid #ccc; */
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            const activeTab = localStorage.getItem("activeTab");
+            if(activeTab){
+            // here your logic comes to show that specific tab add or remove class
+                openLoc(event, activeTab);
+            } 
+        }
+        
+        function openLoc(evt, LocName) {
+            //alert(LocName + "but");
+            localStorage.setItem("activeTab",LocName);
+            
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(LocName).style.display = "block";
+            evt.currentTarget.className += " active";
+            document.getElementById(LocName + "but").className += " active";
+            //location.href = "#"+ LocName
+            }
+            
+            function checklength(i) {
+                'use strict';
+                if (i < 10) {
+                    i = "0" + i;
+                }
+                return i;
+            }
+            
+            var minutes, seconds, count, counter, timer;
+            count = 21; //seconds
+            counter = setInterval(timer, 1000);
+            
+            function timer() {
+                'use strict';
+                count = count - 1;
+                minutes = checklength(Math.floor(count / 60));
+                seconds = checklength(count - minutes * 60);
+                if (count < 0) {
+                    clearInterval(counter);
+                    return;
+                }
+                document.getElementById("timer").innerHTML = 'Next screen refresh in ' + minutes + ':' + seconds + ' ';
+                if (count === 0) {
+                    location.reload();
+                }
+            }
+    </script>
+</head>
+<body>
+<div class="header">
+    <div class="tab">
+        <button id="defaultbut" class="tablinks" onclick="openLoc(event, 'default')">Overall<br>Combined</button>
+        <button id="mainbut" class="tablinks" onclick="openLoc(event, 'main')">Main<br>Conference</button>
+        <button id="keynotebut" class="tablinks" onclick="openLoc(event, 'keynote')">Keynote<br>&nbsp</button>
+        <button id="luxormgmbut" class="tablinks" onclick="openLoc(event, 'luxormgm')">Luxor &<br>MGM</button>
+        <!--<button id="fshmerakibut" class="tablinks" onclick="openLoc(event, 'fshmeraki')">Four Seasons<br>(Meraki)</button>-->
+        <div style="display: flex; justify-content: flex-end">
+            <div>
+                <span id="timer"></span><br>Last data collection<br>###RUNDATETIME### 
+            </div>
+        </div>
+    </div>
+    <h1>
+        Client Distribution by SSID and Wireless Standard
+    </h1>
+</div>
+<div class="content">
+    <div id="default" class="tabcontent">
+        <p>
+            ###OVERALLTABLE## 
+        </p>
+    </div>
+    <div id="main" class="tabcontent">
+        <p>
+            ###main-wlcTABLE## 
+        </p>
+    </div>
+    <div id="keynote" class="tabcontent">
+        <p>
+            ###keynote-wlcTABLE## 
+        </p>
+    </div>
+    <div id="luxormgm" class="tabcontent">
+        <p>
+            ###luxmgm-wlcTABLE## 
+        </p>
+    </div>
+    <!--<div id="fsh" class="tabcontent">
+        <p>
+            ###merakiTABLE## 
+        </p>
+    </div>-->
+</div>
+<div class="footer">
+    <h3>
+        Updated Every 2 Minutes 
+    </h3>
+</div>
+</body>
+</html>

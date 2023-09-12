@@ -1,0 +1,64 @@
+---
+# SSH2Influx work definition file based on YAML 1.1 spec
+# https://yaml.org/spec/1.1/
+# Define the hosts to be polled under an [inventory][hosts] branch.
+# Hosts can have specific commands with a subordinate commands list;
+# [inventory][vars][globalcommands] will be used for all entries
+
+
+# Example of inventory with a host-specific set of commands and
+# one host that only has globalcommands
+# [note: both get global commands]
+#
+# inventory:
+#  hosts:
+#    - host: device-1
+#      commands:
+#        - cmd: show ver
+#          parsespec: 1001
+#        - cmd: show clock
+#          parsespec: 1002
+#    - host: device-2
+
+inventory:
+  credential_set: DefaultCredentials
+  hosts:
+    - host: dist-sw-1
+    - host: dist-sw-2
+    - host: dist-sw-3
+  groupcommands:
+    - cmd: show mac address-table count summary 
+      parsespec: 101
+    - cmd: show ip arp summary
+      parsespec: 102
+    - cmd: show ipv6 neighbors statistics
+      parsespec: 103
+
+parsespecs:
+  - parsespec: 101
+    measurement: switching-stats
+    matchtype: single
+    regex: >-
+      Dynamic Address Count  : (\d+)
+    match1: mac-count
+    match1keytype: field
+    match1valuetype: integer
+  - parsespec: 102
+    measurement: switching-stats
+    matchtype: single
+    regex: >-
+      (\d+) IP ARP entries
+    match1: arp-count
+    match1keytype: field
+    match1valuetype: integer
+  - parsespec: 103
+    measurement: switching-stats-v6
+    matchtype: single
+    regex: >-
+        Entries (\d+), High-water (\d+)
+    match1: neighbor-count
+    match1keytype: field
+    match1valuetype: integer
+    match2: neighbor-highwater-count
+    match2keytype: field
+    match2valuetype: integer
