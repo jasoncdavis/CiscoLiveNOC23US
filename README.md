@@ -136,6 +136,8 @@ Our installs were 4 vCPU with 16 GB vRAM and 100 GB vDisk.
    cd CiscoLiveNOC23US
    python3 -m venv .venv
    source .venv/bin/activate
+   # Note the mysql client installation requires additional steps, follow this link
+   # https://pypi.org/project/mysqlclient/
    pip install -r requirements.txt
    ```
 3. Create an environment-specific optionalconfig.yaml file and replace the CHANGEME parameters with your IP addresses, hostnames, usernames, passwords, etc.
@@ -292,8 +294,6 @@ python -m wireless.createWirelessChannelUtilDashboards
 [CTRL-b + d]  # detaches from tmux
 ```
 
-
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
