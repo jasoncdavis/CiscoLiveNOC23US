@@ -251,9 +251,46 @@ python -m WAN.SSHget-transceiverpower.py
 
 LAN Switching encompasses Core, Distribution, and Access with DC Nexus switching.
 
+The following WAN scripts should be run:
+```sh
+cd CiscoLiveNOC23US
+source .venv/bin/activate
+tmux new -s LAN-NETCONFrpc-getSwitchHealth
+python -m LAN.NETCONFrpc-getSwitchHealth
+[CTRL-b + d]  # detaches from tmux
+tmux new -s LAN-WIFI-DIST-every5min
+python SSH2Influx.py -p LAN/WIFI-DIST-every5min.yml -t 1
+[CTRL-b + d]  # detaches from tmux
+tmux new -s LAN-DIST-every5min
+python SSH2Influx.py -p LAN/DIST-every5min.yml
+[CTRL-b + d]  # detaches from tmux
+```
+
 
 ### Wireless Monitoring
 
+Wireless monitoring includes NETCONF and SSH collectors against WLCs using InfluxDB and Grafana dashboards, along with custom generated dashboards.
+
+The following WAN scripts should be run:
+```sh
+cd CiscoLiveNOC23US
+source .venv/bin/activate
+tmux new -s WIFI-PutWirelessDataIntoDB
+python -m wireless.PutWirelessDataIntoDB
+[CTRL-b + d]  # detaches from tmux
+tmux new -s WIFI-SSH2Influx-WLC-rmi-every1min
+python SSH2Influx.py -p wireless/WLC-rmi-every1min.yml -f 60
+[CTRL-b + d]  # detaches from tmux
+tmux new -s WIFI-SSH2Influx-WLC-every2min
+python SSH2Influx.py -p wireless/WLC-every2min.yml -f 120
+[CTRL-b + d]  # detaches from tmux
+tmux new -s WIFI-createWirelessClientDashboards
+python -m wireless.createWirelessClientDashboards
+[CTRL-b + d]  # detaches from tmux
+tmux new -s WIFI-createWirelessChannelUtilDashboards
+python -m wireless.createWirelessChannelUtilDashboards
+[CTRL-b + d]  # detaches from tmux
+```
 
 
 _For more examples, please refer to the [Documentation](https://example.com)_

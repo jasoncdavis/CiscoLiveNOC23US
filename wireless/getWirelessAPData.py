@@ -55,20 +55,20 @@ def getAPs(controller):
     capwap_filter = '''<filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             <access-point-oper-data xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-wireless-access-point-oper">
                 <capwap-data>
-                <wtp-mac/>
-                <ip-addr/>
-                <name/>
-                <device-detail>
-                    <static-info>
-                    <board-data>
-                        <wtp-serial-num/>
-                        <wtp-enet-mac/>
-                    </board-data>
-                    <ap-models>
-                        <model/>
-                    </ap-models>
-                    </static-info>
-                </device-detail>
+                    <wtp-mac/>
+                    <ip-addr/>
+                    <name/>
+                    <device-detail>
+                        <static-info>
+                        <board-data>
+                            <wtp-serial-num/>
+                            <wtp-enet-mac/>
+                        </board-data>
+                        <ap-models>
+                            <model/>
+                        </ap-models>
+                        </static-info>
+                    </device-detail>
                 </capwap-data>
             </access-point-oper-data>
         </filter>
