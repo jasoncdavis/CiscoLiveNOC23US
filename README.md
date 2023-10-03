@@ -87,7 +87,7 @@ This project is a collection of Python script, database DDL files, Grafana dashb
 
 The following dashboards are part of this project:
 
-![dashboards](https://github.com/jasoncdavis/TEMP-CiscoLiveNOC23US/assets/8027948/04d49fd2-65d9-44f1-a839-2b596df662f9)
+![noc_dashboards_animated](https://github.com/jasoncdavis/CiscoLiveNOC23US/assets/8027948/b5cdbdd4-f65a-428f-ae1d-fe24bccb3d57)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
